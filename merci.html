@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merci — Elev8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#18e39e;
+    --green-dark:#0c8f63;
+    --black:#08090a;
+    --line:rgba(24,227,158,0.18);
+    --text:#eef2f0;
+    --muted:#9aa7a2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 50% 0%, rgba(24,227,158,0.16), transparent 60%),
+      var(--black);
+    color:var(--text); font-family:'Manrope', sans-serif; line-height:1.5;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:64px 6vw;
+  }
+  .logo-mark{width:52px; margin-bottom:18px; filter:drop-shadow(0 0 20px rgba(24,227,158,0.4));}
+  .check{
+    width:56px; height:56px; margin-bottom:18px;
+    border-radius:50%; border:1.5px solid var(--green);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 30px rgba(24,227,158,0.35);
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif; font-weight:700;
+    font-size:clamp(1.8rem, 6vw, 2.6rem); color:#fff; letter-spacing:-0.5px;
+  }
+  p.sub{ max-width:440px; margin:16px auto 34px; color:var(--muted); font-size:0.98rem; }
+  .social-row{display:flex; gap:14px; justify-content:center; flex-wrap:wrap;}
+  .social-btn{
+    display:flex; align-items:center; gap:8px;
+    padding:14px 24px; border-radius:12px; text-decoration:none;
+    font-weight:600; font-size:0.95rem; border:1px solid var(--line);
+    color:#fff; background:rgba(255,255,255,0.03);
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .social-btn:hover{border-color:var(--green); transform:translateY(-2px);}
+  .social-btn svg{width:19px; height:19px;}
+  .social-btn.whatsapp svg{color:#25D366;}
+  .social-btn.insta svg{color:#e1306c;}
+  .logo-word{
+    margin-top:44px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1rem;
+    background:linear-gradient(135deg,#7dffd0,var(--green) 45%,var(--green-dark));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+</style>
+</head>
+<body>
+
+  <div class="check">
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#18e39e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  </div>
+
+  <h1>Inscription confirmée</h1>
+  <p class="sub">Dernière étape : ajoute-moi sur WhatsApp ou Instagram pour recevoir l'adresse exacte à Montpellier.</p>
+
+  <div class="social-row">
+    <a class="social-btn whatsapp" href="https://wa.me/33674867536" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.29-.15-1.7-.84-1.97-.93-.26-.1-.46-.15-.65.15-.2.29-.75.93-.92 1.12-.17.2-.34.22-.63.08-.29-.15-1.22-.45-2.32-1.43-.86-.76-1.44-1.71-1.61-2-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.48.1-.2.05-.37-.02-.51-.08-.15-.65-1.57-.9-2.15-.24-.57-.48-.5-.65-.5-.17 0-.37-.02-.56-.02-.2 0-.51.07-.78.37-.26.29-1.02.99-1.02 2.42 0 1.43 1.04 2.81 1.19 3 .15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.11.55-.08 1.7-.7 1.94-1.37.24-.68.24-1.26.17-1.38-.07-.12-.26-.2-.55-.34z"/><path d="M12.02 2C6.5 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.08-1.33A9.94 9.94 0 0 0 12.02 22C17.53 22 22 17.52 22 12S17.53 2 12.02 2zm0 18.1a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.02.79.8-2.94-.19-.3A8.09 8.09 0 1 1 20.1 12a8.1 8.1 0 0 1-8.08 8.1z"/></svg>
+      WhatsApp
+    </a>
+    <a class="social-btn insta" href="https://instagram.com/bastian_tlc" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zm0 5.35a4.49 4.49 0 1 0 0 8.98 4.49 4.49 0 0 0 0-8.98zm0 7.4a2.91 2.91 0 1 1 0-5.82 2.91 2.91 0 0 1 0 5.82zm4.66-7.58a1.05 1.05 0 1 1 0-2.1 1.05 1.05 0 0 1 0 2.1z"/></svg>
+      Instagram
+    </a>
+  </div>
+
+  <span class="logo-word">Elev8 — Montpellier</span>
+
+</body>
+</html>
