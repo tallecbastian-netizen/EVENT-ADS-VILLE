@@ -445,6 +445,39 @@
     }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
     reveals.forEach(function (el) { io.observe(el); });
   }
+
+  // ── Copie de l'inscription dans Supabase (admin Elev8), source "event" ──
+  // NON bloquant : le POST natif vers Brevo n'est jamais impacté. Si cet envoi
+  // échoue (ou si le JS ne tourne pas), Brevo continue de fonctionner.
+  // fetch(keepalive) survit à la navigation de page provoquée par le submit.
+  var SUPA_URL = 'https://vnyereucdquqkutgsddv.supabase.co';
+  var SUPA_KEY = 'sb_publishable_PUx879zmrMAbCcsX7SaQsQ_dZ_MW2Eh';
+  var sibForm = document.getElementById('sib-form');
+  if (sibForm) {
+    sibForm.addEventListener('submit', function () {
+      try {
+        var emailEl = sibForm.querySelector('#EMAIL');
+        var email = emailEl ? (emailEl.value || '').trim().toLowerCase() : '';
+        if (!email) return;
+        var numEl = sibForm.querySelector('#SMS');
+        var num = numEl ? (numEl.value || '').replace(/\s+/g, '') : '';
+        if (num.charAt(0) === '0') num = num.slice(1);
+        var ccEl = sibForm.querySelector('select[name="SMS__COUNTRY_CODE"]');
+        var cc = ccEl ? ccEl.value : '+33';
+        var tel = num ? (cc + num) : null;
+        fetch(SUPA_URL + '/rest/v1/rpc/add_prospect', {
+          method: 'POST',
+          keepalive: true,
+          headers: {
+            'apikey': SUPA_KEY,
+            'Authorization': 'Bearer ' + SUPA_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ p_email: email, p_tel: tel, p_source: 'event' })
+        }).catch(function () {});
+      } catch (e) {}
+    });
+  }
 })();
 </script>
 
