@@ -7,6 +7,45 @@
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/img/elev8-mark.png">
 <meta name="description" content="Elev8 débarque à Montpellier — une semaine en plein centre-ville. Inscris-toi pour recevoir l'adresse et les infos.">
+
+<!-- ╔════════════════════════════════════════════════════════════╗
+     ║  CETTE PAGE SE PILOTE DEPUIS L'ADMIN — PAS ICI.            ║
+     ║                                                            ║
+     ║  Ville, date, accroche, description : tout se change dans  ║
+     ║  admin-events.html (site Elev8), sans toucher à ce fichier ║
+     ║  ni redéployer. La page lit l'event via le lien de la pub, ║
+     ║  ex. elev8-event.vercel.app/?e=lyon                        ║
+     ║                                                            ║
+     ║  Les textes « Montpellier » écrits en dur plus bas sont un ║
+     ║  FILET DE SÉCURITÉ : ils s'affichent si Supabase est       ║
+     ║  injoignable ou si le lien n'a pas de ?e=. La page reste   ║
+     ║  utilisable et le formulaire Brevo continue de marcher.    ║
+     ╚════════════════════════════════════════════════════════════╝ -->
+<script>
+(function () {
+  var SUPA_URL = 'https://vnyereucdquqkutgsddv.supabase.co';
+  var SUPA_KEY = 'sb_publishable_PUx879zmrMAbCcsX7SaQsQ_dZ_MW2Eh';
+  window.__SUPA = { url: SUPA_URL, key: SUPA_KEY };
+
+  // L'event courant vient du lien de la pub : ?e=<lien court>
+  var slug = '';
+  try {
+    slug = (new URLSearchParams(location.search).get('e') || '').trim().toLowerCase();
+  } catch (e) {}
+
+  // On démarre la lecture ICI, dans le <head>, pour qu'elle se termine pendant
+  // l'écran d'intro (1,15 s). Les textes sont donc déjà remplacés quand
+  // l'intro disparaît : aucun clignotement visible pour le visiteur.
+  window.__eventPromise = !slug ? Promise.resolve(null) : fetch(
+    SUPA_URL + '/rest/v1/events?slug=eq.' + encodeURIComponent(slug) +
+    '&select=id,titre,ville,accroche,description&limit=1',
+    { headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY } }
+  )
+    .then(function (r) { return r.ok ? r.json() : []; })
+    .then(function (rows) { return (rows && rows[0]) || null; })
+    .catch(function () { return null; });   // échec -> on garde les textes de repli
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -286,11 +325,11 @@
 </nav>
 
 <header class="hero">
-  <span class="eyebrow reveal">Une semaine · Centre-ville de Montpellier</span>
+  <span class="eyebrow reveal" id="ev-accroche">Une semaine · Centre-ville de Montpellier</span>
   <img class="hero-logo reveal" src="assets/img/elev8-mark.png" alt="Elev8">
 
-  <h1 class="reveal">Elev8 débarque à<span class="grad">Montpellier</span></h1>
-  <p class="sub reveal">Une semaine dans des locaux en plein centre-ville. Inscris-toi pour recevoir l'adresse exacte.</p>
+  <h1 class="reveal">Elev8 débarque à<span class="grad" id="ev-ville">Montpellier</span></h1>
+  <p class="sub reveal" id="ev-desc">Une semaine dans des locaux en plein centre-ville. Inscris-toi pour recevoir l'adresse exacte.</p>
   <a class="btn-primary reveal" href="#inscription">Participer</a>
 </header>
 
@@ -407,7 +446,7 @@
 </section>
 
 <footer>
-  <span class="logo-word">Elev8</span> — Montpellier
+  <span class="logo-word">Elev8</span> — <span id="ev-ville-footer">Montpellier</span>
 </footer>
 
 <!-- Brevo JS + hidden-iframe target intentionally removed: both AJAX submits
@@ -423,6 +462,36 @@
 <script>
 (function () {
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── Contenu de la page, piloté depuis admin-events.html ──
+  // La lecture a démarré dans le <head>. On applique dès que possible : si elle
+  // répond avant la fin de l'intro (cas normal), le visiteur ne voit jamais les
+  // textes de repli. Si elle échoue, on ne touche à rien et les textes en dur
+  // restent affichés.
+  var EVENT_ID = null;
+
+  function setText(id, val) {
+    if (!val) return;                       // champ vide dans l'admin -> on garde le repli
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;           // textContent, jamais innerHTML
+  }
+
+  if (window.__eventPromise) {
+    window.__eventPromise.then(function (ev) {
+      if (!ev) return;
+      EVENT_ID = ev.id;
+      var ville = ev.ville || ev.titre || '';
+      setText('ev-ville', ville);
+      setText('ev-ville-footer', ville);
+      setText('ev-accroche', ev.accroche);
+      setText('ev-desc', ev.description);
+      if (ville) document.title = 'Elev8 — ' + ville;
+      if (ev.description) {
+        var meta = document.querySelector('meta[name="description"]');
+        if (meta) meta.setAttribute('content', ev.description);
+      }
+    });
+  }
 
   // Intro courte : on retire l'écran après l'animation (le CSS le masque déjà si le JS échoue)
   var intro = document.getElementById('intro');
@@ -450,8 +519,9 @@
   // NON bloquant : le POST natif vers Brevo n'est jamais impacté. Si cet envoi
   // échoue (ou si le JS ne tourne pas), Brevo continue de fonctionner.
   // fetch(keepalive) survit à la navigation de page provoquée par le submit.
-  var SUPA_URL = 'https://vnyereucdquqkutgsddv.supabase.co';
-  var SUPA_KEY = 'sb_publishable_PUx879zmrMAbCcsX7SaQsQ_dZ_MW2Eh';
+  // EVENT_ID est déjà en mémoire (lu au chargement) : aucune requête au submit.
+  var SUPA_URL = window.__SUPA.url;
+  var SUPA_KEY = window.__SUPA.key;
   var sibForm = document.getElementById('sib-form');
   if (sibForm) {
     sibForm.addEventListener('submit', function () {
@@ -473,7 +543,9 @@
             'Authorization': 'Bearer ' + SUPA_KEY,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ p_email: email, p_tel: tel, p_source: 'event' })
+          body: JSON.stringify({
+            p_email: email, p_tel: tel, p_source: 'event', p_event_id: EVENT_ID
+          })
         }).catch(function () {});
       } catch (e) {}
     });
