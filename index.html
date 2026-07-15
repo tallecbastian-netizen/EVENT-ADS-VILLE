@@ -213,7 +213,11 @@
     letter-spacing:3px; text-transform:uppercase; font-size:0.74rem; color:var(--em-lt);
     border:1px solid var(--line); padding:8px 18px; border-radius:30px; margin-bottom:22px;
     background:rgba(45,212,160,0.05); }
-  .hero-logo{width:auto; height:78px; margin-bottom:16px; filter:drop-shadow(0 0 24px rgba(45,212,160,0.45));
+  /* display:block + margin auto : une <img> est EN LIGNE par défaut, donc elle se
+     plaçait sur la même ligne que l'accroche (inline-block) et se retrouvait à côté
+     d'elle au lieu d'être empilée. */
+  .hero-logo{width:auto; height:78px; display:block; margin:0 auto 18px;
+    filter:drop-shadow(0 0 24px rgba(45,212,160,0.45));
     animation:float 6s ease-in-out infinite; }
   @keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
   .hero h1{ font-family:var(--font-display); font-weight:600;
@@ -358,8 +362,8 @@
 </nav>
 
 <header class="hero">
-  <span class="eyebrow reveal" id="ev-accroche">Une semaine · Centre-ville de Montpellier</span>
   <img class="hero-logo reveal" src="assets/img/elev8-mark.png" alt="Elev8">
+  <span class="eyebrow reveal" id="ev-accroche">Une semaine · Centre-ville de Montpellier</span>
 
   <h1 class="reveal"><span class="anim-brand"><span class="ch">E</span><span class="ch">l</span><span class="ch">e</span><span class="ch">v</span><span class="ch huit">8</span></span> débarque à<span class="grad" id="ev-ville">Montpellier</span></h1>
   <p class="sub reveal" id="ev-desc">Une semaine dans des locaux en plein centre-ville. Inscris-toi pour recevoir l'adresse exacte.</p>
