@@ -49,6 +49,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Le 8 de Fraunces a la grosse boucle en HAUT : l'œil le lit à l'envers, et c'est
+     justement le glyphe qui porte la marque (Elev-8). Aucun axe de Fraunces (opsz,
+     WONK, SOFT) ne le corrige. On donne donc au 8 — et à lui seul — une police dont
+     les boucles sont dans le bon sens. « &text=8 » : Google Fonts livre une police
+     réduite au seul caractère 8, soit 820 octets. -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&text=8" rel="stylesheet">
 
 <!-- Brevo required head assets (classic form) -->
 <style>
@@ -167,6 +173,10 @@
      Avant ça : aucune animation déclarée, donc le mot est simplement visible.
      Si le JS ne tourne pas, la classe n'arrive jamais et le mot reste lisible. */
   .ch{ display:inline-block; }
+  /* Le 8 vient de DM Serif (voir le commentaire dans le <head>).
+     1.1em : chaque police a ses proportions, on le recale à la hauteur des
+     lettres Fraunces — sans ça, il paraît trop petit. */
+  .huit{ font-family:"DM Serif Display",serif; font-weight:400; font-size:1.1em; }
   html.elev8-go .anim-brand .ch{ animation:elev8Rise .62s cubic-bezier(.16,1,.3,1) backwards; }
   html.elev8-go .anim-brand .ch:nth-child(1){ animation-delay:0s; }
   html.elev8-go .anim-brand .ch:nth-child(2){ animation-delay:.06s; }
@@ -469,7 +479,9 @@
 </section>
 
 <footer>
-  <span class="logo-word">Elev8</span> — <span id="ev-ville-footer">Montpellier</span>
+  <!-- Pas de .anim-brand : le footer est sous la ligne de flottaison, l'animation
+       s'y jouerait sans témoin. Mais il lui faut le même 8 que partout ailleurs. -->
+  <span class="logo-word"><span class="ch">E</span><span class="ch">l</span><span class="ch">e</span><span class="ch">v</span><span class="ch huit">8</span></span> — <span id="ev-ville-footer">Montpellier</span>
 </footer>
 
 <!-- Brevo JS + hidden-iframe target intentionally removed: both AJAX submits
@@ -493,10 +505,15 @@
   // restent affichés.
   var EVENT_ID = null;
 
+  // L'event s'est chargé : c'est LUI qui fait foi, y compris quand un champ est vide.
+  // Vide = Bastian a volontairement retiré ce texte -> on masque l'élément.
+  // Les textes de repli du HTML ne servent QUE si rien ne se charge (voir plus bas).
   function setText(id, val) {
-    if (!val) return;                       // champ vide dans l'admin -> on garde le repli
     var el = document.getElementById(id);
-    if (el) el.textContent = val;           // textContent, jamais innerHTML
+    if (!el) return;
+    val = (val || '').trim();
+    if (val) { el.textContent = val; el.style.display = ''; }   // textContent, jamais innerHTML
+    else     { el.style.display = 'none'; }
   }
 
   if (window.__eventPromise) {
